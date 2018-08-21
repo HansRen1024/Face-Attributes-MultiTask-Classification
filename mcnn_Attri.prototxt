@@ -1,0 +1,589 @@
+name: "MCNN_Attri"
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  transform_param {
+  	 scale: 0.007843
+     mean_value: 127.5
+     mean_value: 127.5
+     mean_value: 127.5
+     crop_size: 227     
+  }  
+  include {
+    phase: TRAIN
+  }
+  data_param {
+    source: "/home/hans/data/face/CelebA/attri/doc/val_db"
+    batch_size: 192
+    backend: LMDB
+   }
+}
+
+layer {
+  name: "labels"
+  type: "Data"
+  top: "labels"
+  include {
+     phase: TRAIN
+  }
+  data_param {
+    source: "/home/hans/data/face/CelebA/attri/doc/val_lb"
+    batch_size: 192
+	backend: LMDB
+  }
+}
+
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  transform_param {
+  	scale: 0.007843
+    mean_value: 127.5
+    mean_value: 127.5
+    mean_value: 127.5
+    crop_size: 227   
+  }
+  include {
+    phase: TEST
+  }
+  data_param {
+    source: "/home/hans/data/face/CelebA/attri/doc/val_db"
+    batch_size: 128
+    backend: LMDB
+  }
+}
+
+layer {
+  name: "labels"
+  type: "Data"
+  top: "labels"
+  include {
+    phase: TEST
+  }
+  data_param {
+    source: "/home/hans/data/face/CelebA/attri/doc/val_lb"
+    batch_size: 128
+    backend: LMDB
+  }
+}
+
+layer {
+  name: "sliceL"
+  type: "Slice"
+  bottom: "labels"
+  top: "label_attr6"
+  top: "label_attr16"
+  top: "label_attr21"
+  slice_param {
+    slice_dim: 1  
+	slice_point: 1
+	slice_point: 2
+  }
+}
+
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+	decay_mult: 0
+  }
+  param {
+    lr_mult: 2
+	decay_mult: 0
+  }
+  convolution_param {
+    num_output: 75
+    kernel_size: 7
+    stride: 2	
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+
+layer
+{
+	name:"bn1"
+	type:"BatchNorm"
+	bottom:"pool1"
+	top:"bn1"
+	batch_norm_param:{
+		use_global_stats:false
+	}	
+}
+
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "bn1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+	decay_mult: 0
+  }
+  param {
+    lr_mult: 2
+	decay_mult: 0
+  }
+  convolution_param {
+    num_output: 200
+    kernel_size: 5
+    stride: 1	
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3  
+    stride: 2	
+  }
+}
+layer
+{
+	name:"bn2"
+	type:"BatchNorm"
+	bottom:"pool2"
+	top:"bn2"
+	batch_norm_param:{
+		use_global_stats:false
+	}	
+}
+
+#for group1
+layer {
+  name: "conv3_g1_gender"
+  type: "Convolution"
+  bottom: "bn2"
+  top: "conv3_g1_gender"
+  param {
+    lr_mult: 1
+	decay_mult: 0
+  }
+  param {
+    lr_mult: 2
+	decay_mult: 0
+  }
+  convolution_param {
+    num_output: 300
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu3_g1_gender"
+  type: "ReLU"
+  bottom: "conv3_g1_gender"
+  top: "conv3_g1_gender"
+}
+layer {
+  name: "pool3_g1_gender"
+  type: "Pooling"
+  bottom: "conv3_g1_gender"
+  top: "pool3_g1_gender"
+  pooling_param {
+    pool: MAX
+    kernel_size: 5    
+	stride: 3
+  }
+}
+layer
+{
+	name:"bn3_g1_gender"
+	type:"BatchNorm"
+	bottom:"pool3_g1_gender"
+	top:"bn3_g1_gender"
+	batch_norm_param:{
+		use_global_stats:false
+	}	
+}
+layer {
+  name: "FC1_g1_gender"
+  type: "InnerProduct"
+  bottom: "bn3_g1_gender"
+  top: "FC1_g1_gender" 
+  param {    
+    lr_mult: 1
+	
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {    
+    num_output: 512
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu4_g1_gender"
+  type: "ReLU"
+  bottom: "FC1_g1_gender"
+  top: "relu4_g1_gender"
+}
+layer
+{
+	name:"drop1_g1"
+	type:"Dropout"
+	bottom:"relu4_g1_gender"
+	top:"relu4_g1_gender"
+	dropout_param
+	{
+		dropout_ratio:0.5
+	}
+}
+layer {
+  name: "FC2_g1_gender"
+  type: "InnerProduct"
+  bottom: "relu4_g1_gender"
+  top: "FC2_g1_gender" 
+  param {    
+    lr_mult: 1
+	
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {    
+    num_output: 512
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu5_g1_gender"
+  type: "ReLU"
+  bottom: "FC2_g1_gender"
+  top: "relu5_g1_gender"
+}
+layer
+{
+	name:"drop2_g1"
+	type:"Dropout"
+	bottom:"relu5_g1_gender"
+	top:"relu5_g1_gender"
+	dropout_param
+	{
+		dropout_ratio:0.5
+	}
+}
+layer {
+  name: "FC3_g1_gender"
+  type: "InnerProduct"
+  bottom: "relu5_g1_gender"
+  top: "FC3_g1_gender" 
+  param {    
+    lr_mult: 1
+	
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {    
+    num_output: 2
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "accuracy_Male"
+  type: "Accuracy"
+  bottom: "FC3_g1_gender"
+  bottom: "label_attr21"
+  top: "accuracy_Male"
+  include {
+    phase: TEST
+  }
+}
+
+layer {
+  name: "loss_Male"
+  type: "SoftmaxWithLoss"
+  bottom: "FC3_g1_gender"
+  bottom: "label_attr21"
+  top: "loss_Male"
+  loss_weight:0.3333
+  include {
+    phase: TRAIN
+  }
+}
+
+#for group6 
+layer {
+  name: "conv3_g6_Other"
+  type: "Convolution"
+  bottom: "bn2"
+  top: "conv3_g6_Other"
+  param {
+    lr_mult: 1
+	decay_mult: 0
+  }
+  param {
+    lr_mult: 2
+	decay_mult: 0
+  }
+  convolution_param {
+    num_output: 300
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu3_g6_Other"
+  type: "ReLU"
+  bottom: "conv3_g6_Other"
+  top: "conv3_g6_Other"
+}
+layer {
+  name: "pool3_g6_Other"
+  type: "Pooling"
+  bottom: "conv3_g6_Other"
+  top: "pool3_g6_Other"
+  pooling_param {
+    pool: MAX
+    kernel_size: 5    
+	stride: 3	
+  }
+}
+layer
+{
+	name:"bn3_g6_Other"
+	type:"BatchNorm"
+	bottom:"pool3_g6_Other"
+	top:"bn3_g6_Other"
+	batch_norm_param:{
+		use_global_stats:false
+	}	
+}
+layer {
+  name: "FC1_g6_Other"
+  type: "InnerProduct"
+  bottom: "bn3_g6_Other"
+  top: "FC1_g6_Other" 
+  param {    
+    lr_mult: 1	
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {    
+    num_output: 512
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu4_g6_Other"
+  type: "ReLU"
+  bottom: "FC1_g6_Other"
+  top: "relu4_g6_Other"
+}
+layer
+{
+	name:"drop1_g6"
+	type:"Dropout"
+	bottom:"relu4_g6_Other"
+	top:"relu4_g6_Other"
+	dropout_param
+	{
+		dropout_ratio:0.5
+	}
+}
+layer {
+  name: "FC2_g6_Other"
+  type: "InnerProduct"
+  bottom: "relu4_g6_Other"
+  top: "FC2_g6_Other" 
+  param {    
+    lr_mult: 1	
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {    
+    num_output: 512
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu5_g6_Other"
+  type: "ReLU"
+  bottom: "FC2_g6_Other"
+  top: "relu5_g6_Other"
+}
+layer
+{
+	name:"drop2_g5"
+	type:"Dropout"
+	bottom:"relu5_g6_Other"
+	top:"relu5_g6_Other"
+	dropout_param
+	{
+		dropout_ratio:0.5
+	}
+}
+#group6 Bangs
+layer {
+  name: "FC3_g6_Bangs"
+  type: "InnerProduct"
+  bottom: "relu5_g6_Other"
+  top: "FC3_g6_Bangs" 
+  param {    
+    lr_mult: 1	
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {    
+    num_output: 2
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "accuracy_Bangs"
+  type: "Accuracy"
+  bottom: "FC3_g6_Bangs"
+  bottom: "label_attr6"
+  top: "accuracy_Bangs"
+  include {
+    phase: TEST
+  }
+}
+
+layer {
+  name: "loss_Bangs"
+  type: "SoftmaxWithLoss"
+  bottom: "FC3_g6_Bangs"
+  bottom: "label_attr6"
+  top: "loss_Bangs"
+  loss_weight:0.3333
+  include {
+    phase: TRAIN
+  }
+}
+
+#group4 Eyeglasses
+layer {
+  name: "FC3_g4_Eyeglasses"
+  type: "InnerProduct"
+  bottom: "relu5_g6_Other"
+  top: "FC3_g4_Eyeglasses" 
+  param {    
+    lr_mult: 1	
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {    
+    num_output: 2
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "accuracy_Eyeglasses"
+  type: "Accuracy"
+  bottom: "FC3_g4_Eyeglasses"
+  bottom: "label_attr16"
+  top: "accuracy_Eyeglasses"
+  include {
+    phase: TEST
+  }
+}
+
+layer {
+  name: "loss_Eyeglasses"
+  type: "SoftmaxWithLoss"
+  bottom: "FC3_g4_Eyeglasses"
+  bottom: "label_attr16"
+  top: "loss_Eyeglasses"
+  loss_weight:0.3333
+  include {
+    phase: TRAIN
+  }
+}
