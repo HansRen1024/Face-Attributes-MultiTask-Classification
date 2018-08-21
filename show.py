@@ -64,3 +64,4 @@ if __name__ == '__main__':
 	process('Egeglasses',1)
 	process('Gender',2)
 	plt.show()
+	
