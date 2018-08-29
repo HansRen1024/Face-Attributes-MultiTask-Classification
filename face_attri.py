@@ -18,9 +18,11 @@ net_mcnn = caffe.Net(deploy,caffemodel,caffe.TEST)
 caffe.set_device(0)
 caffe.set_mode_gpu()
 def faceAttri(img):
-    caffe_img = (img.copy()-127.5)*0.007843
-    caffe_img = cv2.resize(caffe_img,(227,227))
-    caffe_img = np.swapaxes(caffe_img, 0, 2)
+    transformer = caffe.io.Transformer({'data': net_mcnn.blobs['data'].data.shape})
+    transformer.set_transpose('data', (2, 0, 1))
+    transformer.set_mean('data', np.array([127.5,127.5,127.5]))
+    transformer.set_raw_scale('data', 127.5)
+    caffe_img = transformer.preprocess('data', img)
     net_mcnn.blobs['data'].reshape(1,3,227,227)
     net_mcnn.blobs['data'].data[...]=caffe_img
     out = net_mcnn.forward()
