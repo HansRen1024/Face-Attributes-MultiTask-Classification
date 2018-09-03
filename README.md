@@ -10,6 +10,7 @@ Use Cafffe to do Face Attributes MultiTask Classification based on CelebA data s
 6. Then, run **sed -i 's/-1/0/g' train.txt**
 7. Next, use **create_lmdb.sh** to create lmdb datasets.
 8. Finally, change **mcnn_Attri.prototxt** suited for your situation.
+9. **show.py** is used for training output visulisation.
 ----
 
 **中文博客地址**
