@@ -8,7 +8,7 @@ Use Cafffe to do Face Attributes MultiTask Classification based on CelebA data s
 4. Run **sed -i 's/    / /g' list_attr_celeba.txt** to replease double sapce to single space.
 5. Use **processlist.py** to pick up which attributes you want.
 6. Then, run **sed -i 's/-1/0/g' train.txt**
-7. Next use **create_lmdb.sh** to create lmdb datasets.
+7. Next, use **create_lmdb.sh** to create lmdb datasets.
 8. Finally, change **mcnn_Attri.prototxt** suited for your situation.
 ----
 
