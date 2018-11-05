@@ -13,8 +13,8 @@ Use Cafffe to do Face Attributes MultiTask Classification based on CelebA data s
 9. **show.py** is used for training output visulisation.
 ----
 
-![image](https://github.com/HandsomeHans/Face-Attributes-MultiTask-Classification/example.jpg)
-![image](https://github.com/HandsomeHans/Face-Attributes-MultiTask-Classification/example_1.jpg)
+![image](https://github.com/HandsomeHans/Face-Attributes-MultiTask-Classification/blob/master/example.jpg)
+![image](https://github.com/HandsomeHans/Face-Attributes-MultiTask-Classification/blob/master/example_1.jpg)
 
 **中文博客地址**
 
