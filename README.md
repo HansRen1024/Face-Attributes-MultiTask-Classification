@@ -16,13 +16,15 @@ Use Cafffe to do Face Attributes MultiTask Classification based on CelebA data s
 ![image](https://github.com/HandsomeHans/Face-Attributes-MultiTask-Classification/blob/master/example.jpg)
 ![image](https://github.com/HandsomeHans/Face-Attributes-MultiTask-Classification/blob/master/example_1.jpg)
 
+----
+
 **中文博客地址**
 
 https://blog.csdn.net/renhanchi/article/details/81903684
 
 ----
 
-**Reference**
+**References**
 
 https://github.com/HolidayXue/CodeSnap
 
